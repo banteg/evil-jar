@@ -2,6 +2,10 @@
 
 ![](assets/pickle-evil-jar.png)
 
+## Authors
+
+@banteg @emilianobonassi @lehnberg
+
 ## Summary
 
 - On Saturday November 21 2020, an attacker drained 19 million DAI from pickle.finance's pDAI Jar.

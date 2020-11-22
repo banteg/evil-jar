@@ -4,7 +4,7 @@
 
 ## Authors
 
-@banteg @emilianobonassi @lehnberg
+[@banteg](https://github.com/bantg) [@emilianobonassi](https://github.com/emilianobonassi) [@lehnberg](https://github.com/lehnberg) [@samczsun](https://github.com/samczsun) [@vasa-develop](https://github.com/vasa-develop) [@bneiluj](https://github.com/bneiluj)
 
 ## Summary
 

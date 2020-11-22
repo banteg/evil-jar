@@ -154,7 +154,20 @@ Exploit [transaction trace](https://ethtx.info/mainnet/0xe72d4e7ba9b5af0cf2a8cfb
 
 ## Details of fix
 
-[To be filled by Pickle team.]
+The first part of mitigating the problem was to prevent further deposits into the PickleJar. For this, the Pickle Finance team [called `setMin(0)`](https://ethtx.info/mainnet/0x784a56fc30bd69e4c60bbf0ad172896244ba60b146352aa0103fd9a9e6af8b18) on the DAI PickleJar via the governance multisig.
+
+As described above, the offending logic that allows arbitrary code injection is located in [`CurveProxyLogic`](https://github.com/pickle-finance/protocol/blob/master/src/proxy-logic/curve.sol#L27-L54), which is a Converter approved for use within the Controller. In order to revoke this Converter, this function in the [Controller](https://github.com/pickle-finance/protocol/blob/master/src/controller-v4.sol#L108-L111) must be called:
+
+```solidity
+function revokeJarConverter(address _converter) public {
+    require(msg.sender == governance, "!governance");
+    approvedJarConverters[_converter] = false;
+}
+```
+
+At the time, the `governance` role was set to a 12-hour Timelock so it was decided that the governance multisig address would be set as the new `governance` role so that the Pickle Finance team could invoke this function without waiting for a Timelock. This transaction was [queued](https://ethtx.info/mainnet/0x605d50b0cd8b43f799f0fc7b4d5128ce480223cdf004bd46e5beebf39dac5dff) and [executed](https://ethtx.info/mainnet/0xe3e89ac4eed9d3d5dd43dfa97cf53aa0c32d13844ccf746f00eb263e4e05345a) by **2020-11-22 03:15 PM (UTC)**, granting the Pickle Finance team the ability to revoke `CurveProxyLogic` from use by [calling](https://ethtx.info/mainnet/0x718495b34b1fa33945aea2c694568f099b84198be9490386c36cd456be3539f8) `revokeJarConverter()`.
+
+While this removes a key piece of the exploit, there are still further issues of concern as explained in the sections above. The Pickle Finance team will continue to work in the coming days and weeks to fix these vulnerabilities.
 
 ## Timeline of events
 
@@ -163,7 +176,7 @@ Exploit [transaction trace](https://ethtx.info/mainnet/0xe72d4e7ba9b5af0cf2a8cfb
 - **2020-11-22 01:15** A governance switch from Timelock to multisig is [initiated](http://ethtx.info/mainnet/0x605d50b0cd8b43f799f0fc7b4d5128ce480223cdf00) `ControllerV4.setGovernance(multisig_addr)`.
 - **01:32** Exploit is successfully replicated and narrowed down to the actually vulnerable parts.
 - **02:05** Sam publishes his version of the exploit.
-- **03:58** pDAI Jar [deposits are disabled](https://ethtx.info/mainnet/0x784a56fc30bd69e4c60bbf0ad172896244ba60b146352aa0103fd9a9e6af8b18) by calling `setMin(0)` in the Timelock for 12 hours
+- **03:58** pDAI Jar [deposits are disabled](https://ethtx.info/mainnet/0x784a56fc30bd69e4c60bbf0ad172896244ba60b146352aa0103fd9a9e6af8b18) by calling `setMin(0)`
 - **11:43** 22.6 COMP withdrawn from Strategy by `Controller.strategist`
     - [`ControllerV4.inCaseStrategyTokenGetStuck`](https://ethtx.info/mainnet/0x6a6cc3446a4a44f741c36d0ac758b6241d60a93e108e68c3c323943d301f2f95)
     - [`ControllerV4.inCaseTokensGetStuck`](https://ethtx.info/mainnet/0xcb33620d962b55f5696ce88ce449bdcf40d7d467dfe0059b8ca8a9e97cb2d963)

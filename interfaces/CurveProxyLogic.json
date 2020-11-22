@@ -1,0 +1,35 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "curve",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes4",
+        "name": "curveFunctionSig",
+        "type": "bytes4"
+      },
+      {
+        "internalType": "uint256",
+        "name": "curvePoolSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "curveUnderlyingIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "underlying",
+        "type": "address"
+      }
+    ],
+    "name": "add_liquidity",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

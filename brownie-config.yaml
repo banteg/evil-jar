@@ -2,7 +2,7 @@ networks:
   default: mainnet-fork
   mainnet-fork:
     cmd_settings:
-      fork: http://127.0.0.1:8545@11303122
+      fork: http://127.0.0.1:8545 #@11303122
 
 autofetch_sources: true
 

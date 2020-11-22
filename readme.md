@@ -20,7 +20,7 @@ Pickle Jars are forked versions of Yearn Vaults v1 with modifications. The Jars 
 
 Pickle [ControllerV4](https://github.com/pickle-finance/protocol/blob/4d7ecfa766536622848a29407c0464283d11fb67/src/controller-v4.sol#L250-L336)'s `swapExactJarForJar()` function can be used to drain non-Jar tokens from Strategies or tokens that end up in the Controller.
 
-```javascript
+```solidity
 // Function to swap between jars
 function swapExactJarForJar(
     address _fromJar, // From which Jar
@@ -38,7 +38,7 @@ EvilJar is passed as both `_fromJar` and `_toJar` arguments. Since Controller do
 
 The `deposit()` function holds the payload and transfers the tokens from the Controller to the attacker. It could look like this:
 
-```vyper
+```python
 @external
 def deposit(amt: uint256):  # payload
     self.token.transferFrom(msg.sender, self.owner, amt)
@@ -96,7 +96,7 @@ By supplying a target address as `curve`, a function 4-byte identifier as `curve
 
 A FakeUnderlying contract needs to implement `balanceOf`, `allowance` and `approve` to work. The exploit payload goes into the `balanceOf`, which sets the first argument of the function to be called:
 
-```vyper
+```python
 @view
 @external
 def balanceOf(src: address) -> (address):

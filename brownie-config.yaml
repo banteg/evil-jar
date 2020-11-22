@@ -1,0 +1,17 @@
+networks:
+  default: mainnet-fork
+  mainnet-fork:
+    cmd_settings:
+      fork: http://127.0.0.1:8545@11303122
+
+autofetch_sources: true
+
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@3.2.0
+
+# path remapping to support OpenZepplin imports with NPM-style path
+compiler:
+  solc:
+    version: 0.6.12
+    remappings:
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@3.2.0"

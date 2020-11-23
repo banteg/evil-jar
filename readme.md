@@ -51,7 +51,7 @@ It would be called here, with `_toJar` being the EvilJar and `_toBal` being the 
 uint256 _toBal = IERC20(_toJarToken).balanceOf(address(this));
 IERC20(_toJarToken).safeApprove(_toJar, 0);
 IERC20(_toJarToken).safeApprove(_toJar, _toBal);
-IJar(_toJar).deposit(_toBal);
+IJar(_toJar).deposit(_toBal);  // call to EvilJar
 ```
 
 The above makes it possible to drain funds from the Controller. For this to have effect, there needs to be funds there to drain.
@@ -81,11 +81,12 @@ function add_liquidity(
     uint256 curveUnderlyingIndex,
     address underlying
 ) public {
-    uint256 underlyingAmount = IERC20(underlying).balanceOf(address(this));
-    ...
+    uint256 underlyingAmount = IERC20(underlying).balanceOf(address(this));  // call to FakeUnderlying
+    uint256[] memory liquidity = new uint256[](curvePoolSize);
+    liquidity[curveUnderlyingIndex] = underlyingAmount;
     bytes memory callData = abi.encodePacked(
         curveFunctionSig,
-        liquidity,
+        liquidity,  // our injected value
         uint256(0)
     );
     ...
@@ -126,8 +127,8 @@ Our simplified and more efficient reproduction of the exploit is published at ht
 Exploit [transaction trace](https://ethtx.info/mainnet/0xe72d4e7ba9b5af0cf2a8cfb1e30fd9f388df0ab3da79790be842bfbed11087b0).
 
 1. Deploy two Evil Jars
-    - [0x75aa95508f019997aeee7b721180c80085abe0f9](https://etherscan.io/address/0x75aa95508f019997aeee7b721180c80085abe0f9 ) 
-    -  [0x02c8364546ec849e1726fb6cae5228702b111ee6](https://etherscan.io/address/0x02c8364546ec849e1726fb6cae5228702b111ee6)
+    - [0x75aa95508f019997aeee7b721180c80085abe0f9](https://etherscan.io/address/0x75aa95508f019997aeee7b721180c80085abe0f9) 
+    - [0x02c8364546ec849e1726fb6cae5228702b111ee6](https://etherscan.io/address/0x02c8364546ec849e1726fb6cae5228702b111ee6)
 
 2. Get the amount available to withdraw from StrategyCmpdDaiV2
 `StrategyCmpdDaiV2.getSuppliedUnleveraged()` => 19728769153362174946836922
